@@ -3,3 +3,4 @@ pandas
 numpy
 plotly
 polygon-api-client
+streamlit-autorefresh
