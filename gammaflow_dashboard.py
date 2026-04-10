@@ -2,9 +2,8 @@ import streamlit as st
 import pandas as pd
 from polygon import RESTClient
 from datetime import datetime
-import time
 import numpy as np
-import plotly.graph_objects as go   # ← This was missing!
+import plotly.graph_objects as go
 
 st.set_page_config(page_title="GammaFlow Beast", layout="wide", page_icon="🚀")
 
@@ -83,13 +82,13 @@ with tab2:
         st.info("Pulling latest option chain from Polygon free tier...")
         st.caption("Note: Free tier gives limited data. Full real-time GEX needs paid tier.")
         
-        # Fixed & nicer simulated Gamma Heatmap
-        np.random.seed(42)  # for reproducibility
-        z = np.random.randint(-8000, 12000, size=(8, 15))  # more realistic size
+        # Improved simulated Gamma Heatmap
+        np.random.seed(42)
+        z = np.random.randint(-8000, 12000, size=(8, 15))
         
         fig = go.Figure(data=go.Heatmap(
             z=z,
-            colorscale='RdYlGn',      # Red → Yellow → Green (good for gamma)
+            colorscale='RdYlGn',
             hoverongaps=False,
             colorbar_title="Gamma Exposure"
         ))
@@ -103,7 +102,6 @@ with tab2:
         )
         
         st.plotly_chart(fig, use_container_width=True)
-        
     else:
         st.warning("Enter Polygon API key in sidebar for real data.")
 
@@ -111,14 +109,19 @@ with tab3:
     st.subheader("📊 Live Flow Reads")
     if client:
         st.info("Fetching recent options activity (free tier aggregates)...")
+        
+        # FIXED: Use only as many items as the number of selected tickers
+        n = min(len(tickers), 4)   # limit to max 4 for demo
+        
         flow_data = pd.DataFrame({
-            "Ticker": tickers[:4],
-            "Contract": ["250418C615", "250418C140", "250418C320", "250418C110"],
-            "Volume": [15200, 8900, 6400, 5200],
-            "OI": [180, 420, 310, 95],
-            "Aggression": [84.4, 21.2, 15.8, 54.7],
-            "Swept": ["Yes", "Yes", "No", "Yes"]
+            "Ticker": tickers[:n],
+            "Contract": ["250418C615", "250418C140", "250418C320", "250418C110"][:n],
+            "Volume": [15200, 8900, 6400, 5200][:n],
+            "OI": [180, 420, 310, 95][:n],
+            "Aggression": [84.4, 21.2, 15.8, 54.7][:n],
+            "Swept": ["Yes", "Yes", "No", "Yes"][:n]
         })
+        
         st.dataframe(flow_data, use_container_width=True, hide_index=True)
     else:
         st.warning("Enter Polygon API key to see real flow data.")
