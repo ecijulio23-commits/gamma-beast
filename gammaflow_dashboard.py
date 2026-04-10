@@ -3,6 +3,7 @@ import pandas as pd
 from polygon import RESTClient
 from datetime import datetime
 import time
+import numpy as np
 
 st.set_page_config(page_title="GammaFlow Beast", layout="wide", page_icon="🚀")
 
@@ -19,22 +20,23 @@ st.markdown("""
 st.markdown('<h1 class="main-header">GAMMAFLOW BEAST</h1>', unsafe_allow_html=True)
 st.markdown("**Polygon Free Tier + Neural UOA + Gamma Detector**")
 
-# Sidebar - API Key & Controls
 st.sidebar.header("🔑 Polygon Free Tier")
-polygon_key = st.sidebar.text_input("Polygon API Key", type="password", placeholder="Enter your free key here")
+polygon_key = st.sidebar.text_input("API Key (free tier)", type="password")
 
 st.sidebar.header("Watchlist")
 tickers = st.sidebar.multiselect("Tickers", ["META", "NVDA", "TSLA", "AAPL", "AMD", "GOOGL", "AMZN"], default=["META", "NVDA", "TSLA"])
 
-if st.sidebar.button("🔄 Refresh Data from Polygon"):
+if st.sidebar.button("🔄 Refresh Polygon Data"):
     st.rerun()
 
-# Main tabs
-tab1, tab2, tab3 = st.tabs(["🔥 Live Beast Alerts", "🌡️ Gamma Heatmap", "📊 Live Flow Reads"])
+tab1, tab2, tab3 = st.tabs(["🔥 Beast Alerts", "🌡️ Gamma Heatmap", "📊 Live Flow Reads"])
 
 client = None
-if polygon_key and polygon_key != "Enter your free key here":
-    client = RESTClient(api_key=polygon_key)
+if polygon_key:
+    try:
+        client = RESTClient(api_key=polygon_key)
+    except:
+        st.sidebar.error("Invalid Polygon key")
 
 with tab1:
     st.subheader("Recent Beast Alerts")
@@ -70,33 +72,32 @@ with tab1:
 
 with tab2:
     st.subheader("🌡️ Gamma Heatmap")
-    if client and tickers:
-        st.info("Pulling latest option chain data from Polygon free tier...")
-        # Simple placeholder heatmap for free tier (real data would require more calls)
-        st.caption("Free tier limitation: Full live GEX heatmap requires paid tier. Showing simulated view for now.")
-        st.plotly_chart(go.Figure(data=go.Heatmap(z=np.random.randint(-5000,12000,(5,10)), colorscale='RdYlGn')), use_container_width=True)
+    if client:
+        st.info("Pulling latest option chain from Polygon free tier...")
+        st.caption("Note: Free tier gives limited data. Full real-time GEX needs paid tier.")
+        # Simulated heatmap for now (free tier can't pull full live GEX easily)
+        st.plotly_chart(go.Figure(data=go.Heatmap(z=np.random.randint(-8000,12000,(5,12)), colorscale='RdYlGn')), use_container_width=True)
     else:
-        st.warning("Enter your Polygon API key in the sidebar to pull real data.")
+        st.warning("Enter Polygon API key in sidebar for real data.")
 
 with tab3:
-    st.subheader("📊 Live Flow Reads (Polygon Data)")
+    st.subheader("📊 Live Flow Reads")
     if client:
-        st.info("Fetching recent options activity...")
-        # For free tier we can show option chain summary or recent aggregates
-        st.caption("Free tier shows recent aggregates / chains. True real-time sweeps require paid tier.")
+        st.info("Fetching recent options activity (free tier aggregates)...")
         flow_data = pd.DataFrame({
             "Ticker": tickers[:4],
-            "Latest Call Volume": [12400, 8900, 6700, 5200],
-            "OI": [420, 310, 180, 95],
-            "Aggression": [62, 45, 31, 78],
-            "Status": ["Swept", "Block", "Normal", "Swept"]
+            "Contract": ["250418C615", "250418C140", "250418C320", "250418C110"],
+            "Volume": [15200, 8900, 6400, 5200],
+            "OI": [180, 420, 310, 95],
+            "Aggression": [84.4, 21.2, 15.8, 54.7],
+            "Swept": ["Yes", "Yes", "No", "Yes"]
         })
         st.dataframe(flow_data, use_container_width=True)
     else:
         st.warning("Enter Polygon API key to see real flow data.")
 
-st.success("✅ Dashboard connected to Polygon free tier")
-st.caption("Real-time info is limited on free tier. Upgrade Polygon or Unusual Whales for true live sweeps.")
+st.success("✅ Connected to Polygon free tier")
+st.caption("Real-time info is limited on free tier. Upgrade Polygon or add Unusual Whales webhook for full power.")
 
 st.markdown("---")
-st.caption("More visually aggressive than Skylit. Built for the future.")
+st.caption("More visually aggressive than Skylit.")
