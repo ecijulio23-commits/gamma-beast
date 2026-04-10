@@ -1,4 +1,3 @@
-%%writefile gammaflow_dashboard.py
 import streamlit as st
 from datetime import datetime
 import time
