@@ -8,7 +8,7 @@ from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(page_title="GammaFlow Beast", layout="wide", page_icon="⚫", initial_sidebar_state="expanded")
 
-# Professional Terminal Theme
+# ====================== PROFESSIONAL TERMINAL THEME ======================
 st.markdown("""
 <style>
     .stApp { background: #0a0a0f; color: #e0e0e0; }
@@ -22,7 +22,7 @@ st.markdown("""
         background: #111118; border: 1px solid #222233;
         border-radius: 12px; padding: 16px; text-align: center;
     }
-    .heatmap-title { font-size: 1.9rem; font-weight: 700; text-align: center; margin: 10px 0 8px 0; color: #ffffff; }
+    .heatmap-title { font-size: 1.9rem; font-weight: 700; text-align: center; margin: 15px 0 8px 0; color: #ffffff; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -52,13 +52,13 @@ st.markdown("---")
 
 left_col, right_col = st.columns([3.8, 1.2])
 
-# ==================== MAIN HEATMAP (Professional redesign) ====================
+# ==================== LEFT: PROFESSIONAL GEX/VEX HEATMAP ====================
 with left_col:
     st.markdown('<div class="heatmap-title">GEX / VEX HEATMAP</div>', unsafe_allow_html=True)
 
     mode = st.radio("Mode", ["GEX", "VEX"], horizontal=True, label_visibility="collapsed")
 
-    # High-quality realistic GEX
+    # High-quality realistic GEX generation
     np.random.seed(int(time.time()/5))
     expirations = ["2026-04-03", "2026-04-10", "2026-04-17", "2026-04-24", "2026-05-01", "2026-05-15"]
     strikes = list(range(430, 511, 10))
@@ -77,7 +77,7 @@ with left_col:
 
     df = pd.DataFrame(data, columns=["Expiration"] + [f"${s}" for s in strikes])
 
-    # Color scheme matching your screenshot
+    # Professional color scheme (strong intensity like your screenshot)
     cell_colors = []
     for row in df.iloc[:, 1:].values:
         colors = []
@@ -121,7 +121,6 @@ with left_col:
 with right_col:
     st.subheader("OPTIONS FLOW ANALYSIS")
 
-    # Professional-looking flow table
     flow_data = pd.DataFrame({
         "Contract": ["250418C470", "250418C480", "250418P460", "250418C490", "250418C450"],
         "Type": ["Call Sweep", "Call Block", "Put Sweep", "Call Sweep", "Call Block"],
